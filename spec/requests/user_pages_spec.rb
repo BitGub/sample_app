@@ -48,8 +48,7 @@ describe "User pages" do
             it { should_not have_link('delete', href: user_path(admin)) }
           end
         end
-  end
-  
+  end 
   
   describe "profile page" do
     let(:user) { FactoryGirl.create(:user) }
@@ -78,7 +77,7 @@ describe "User pages" do
       end
     end
     
-  describe "after submission" do
+    describe "after submission" do
     before { click_button submit }
 
     it { should have_title('Sign up') }
@@ -120,6 +119,18 @@ describe "User pages" do
     before do  
       sign_in user
       visit edit_user_path(user)
+    end
+    
+    describe "forbidden attributes" do
+      let(:params) do
+        { user: { admin: true, password: user.password,
+                  password_confirmation: user.password } }
+      end
+        before do
+          sign_in user, no_capybara: true
+          patch user_path(user), params
+        end
+          specify { expect(user.reload).not_to be_admin }
     end
     
     describe "with valid information" do
